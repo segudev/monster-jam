@@ -116,6 +116,7 @@ When inside a group, the SCENE buttons launch the group scenes, not the main one
   While **SELECT** is pressed the currently selected clip is WHITE.
 * **CLEAR+(PAD)**: Delete the clip
 * **DUPLICATE**: To duplicate a clip keep the duplicate button pressed; choose the source clip (it must be a clip with content, you can still select a different clip with content); select the destination clip (this must be an empty clip, which can also be on a different track); release the Duplicate button.
+* **SHIFT+(PAD)**: Launch clip with alternative settings
 
 MonsterJam will attempt to retroactively launch the clip "on time" even if you are a little late triggering it, meaning you don't have to always "cue" it up in advance and let your musician reflexes take over. Note that this only works as well as Bitwig's own "continue" play mode allows, i.e. there must be another clip playing on that track. See **Launch tolerance** setting.
 

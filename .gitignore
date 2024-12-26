@@ -1,4 +1,5 @@
 *.iml
+.bloop/
 .idea/
 .settings/
 .vscode/

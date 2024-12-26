@@ -43,12 +43,12 @@ trait ClipMatrix:
       track.isQueuedForStop.markInterested()
 
       val clips = track.clipLauncherSlotBank()
-
       val pressedAt: mutable.Seq[PressedAt] = mutable.ArraySeq.fill(8)(PressedAt(Instant.now()))
 
       EIGHT.flatMap { row =>
-        val btn: JamRgbButton      = j.matrix(row)(col)
-        val clip: ClipLauncherSlot = clips.getItemAt(row)
+        val btn = j.matrix(row)(col) 
+        val clip = clips.getItemAt(row)
+        // Mark required observers
         clip.color().markInterested()
         clip.hasContent.markInterested()
         clip.isPlaying.markInterested()
@@ -59,19 +59,11 @@ trait ClipMatrix:
         clip.isStopQueued.markInterested()
         clip.name.markInterested()
         clips.exists().markInterested()
-
+        // Add bindings including new shift+pad combo
         Vector(
           SupColorStateB(btn.light, () => clipColor(track, clip), JamColorState.empty),
-          EB(
-            btn.st.press,
-            s"clipPress $row:$col",
-            () => handleClipPress(clip, clips, pressedAt(col))
-          ),
-          EB(
-            btn.st.release,
-            s"clipRelease $row:$col",
-            () => handleClipRelease(clip, clips, pressedAt(col))
-          ),
+          EB(btn.st.press, s"clipPress $row:$col", () => handleClipPress(clip, clips, pressedAt(col))),
+          EB(btn.st.release, s"clipRelease $row:$col", () => handleClipRelease(clip, clips, pressedAt(col)))
         )
       }
     } ++ Vector(
@@ -93,15 +85,17 @@ trait ClipMatrix:
       clips: ClipLauncherSlotBank,
       pressedAt: PressedAt
     ): Unit =
-      /* Until we're able to directly access clips, must rely on cursor, so select always */
       clip.select()
-      if GlobalMode.Select.isOn then () // clip.select()
+      if GlobalMode.Select.isOn then ()
       else if GlobalMode.Clear.isOn then clip.deleteObject()
       else if GlobalMode.Duplicate.isOn then
         if source.isEmpty then source = Some(clip)
         else
           source.foreach(s => if s != clip then clip.replaceInsertionPoint().copySlotsOrScenes(s))
           source = None
+      // Add check for shift press
+      else if j.Mod.Shift.st.isPressed then
+        clip.launchAlt() // Use Bitwig's alternative launch
       else pressedAt.value = Instant.now()
 
     private def handleClipRelease(

@@ -205,4 +205,5 @@ class JamSurface(implicit ext: MonsterJamExt) extends Util:
       val solo   = JC(j.solo, Mod.Shift)
 
       val notes = JC(j.notes, Mod.Shift)
+      val matrix = j.matrix.flatten.map(btn => JC(btn, Mod.Shift)) 
 end JamSurface
